@@ -1,4 +1,4 @@
-# ogr2ogr_exemples
+# ogr2ogr exemples
 Exemples d'usage de la librairie ogr2ogr
 
 #### Comment utiliser ogr2ogr ?
