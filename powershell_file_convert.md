@@ -1,5 +1,5 @@
 # PowerShell : conversion de fichiers
-Exemples d'usage de la librairie ogr2ogr
+Exemples d'usage de PowerShell pour manipuler, transformer, convertir des fichiers.
 
 #### Comment utiliser PowerShell ?
 Tapez PowerShell dans votre barre de recherche Windows, puis copiez et collez les scripts à votre guise.
