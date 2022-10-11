@@ -11,6 +11,8 @@ Puis vérifiez qu'ogr2ogr tourne bien,
 ogr2ogr --version
 ```
 
+Documentation : https://gdal.org/programs/ogr2ogr.html
+
 ### Import d'un SHP vers PostgreSQL/PostGIS
 Ici, import de C:\data\foncier\geo\parcelle_cadastrale.shp dans geo.parcelle_cadastrale
 ```
