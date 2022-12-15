@@ -25,11 +25,26 @@ Ici, export de la table spde.spde_copy_septembre (personnalisation possible avec
 ogr2ogr -f "ESRI Shapefile" D:\data\spde\2022\spde_copy_septembre.shp PG:"host=localhost port=5432 dbname=work user=postgres password=postgres" -sql "SELECT * FROM spde.spde_copy_septembre"
 ```
 
-### Clone de tables d'une instance PostgreSQL vers une autre instance PostgreSQL
-Voir : https://www.postgresonline.com/journal/index.php?/archives/31-GDALOGR2OGR-for-Data-Loading.html
+### Copie d'une table d'une BDD PostgreSQL vers une autre BDD PostgreSQL
+Voir : https://www.postgresonline.com/journal/index.php?/archives/31-GDALOGR2OGR-for-Data-Loading.html  
 Ici, copie de ff_d75_2021_test.dependance_75_2021 de la BDD foncier vers la BDD test dans le schéma froger
 ```
 ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=test user=postgres password=postgres" PG:"host=localhost port=5432 dbname=foncier user=postgres password=postgres" -lco OVERWRITE=yes -lco schema=froger ff_d75_2021_test.dependance_75_2021
+```
+
+### Copie d'une table avec géométrie Esri (sde) d'une BDD PostgreSQL vers une autre BDD PostgreSQL avec conversion en géométrie PostGIS
+Ici, copie de diffusion.parcelle_cadastrale de la BDD Apur (production) vers la BDD work dans la table test.parcelle_cadastrale_copy
+```
+ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=work user=postgres password=postgres" PG:"host=zpostgresig port=5432 dbname=apur user=froger password=xxx" -lco OVERWRITE=yes -lco schema=test -sql "select st_astext(shape) as geom, * from diffusion.parcelle_cadastrale" -geomfield geom -nln parcelle_cadastrale_copy
+```
+
+Puis, sur PostGIS, dans la BDD work :
+```sql
+update test.parcelle_cadastrale_copy
+set geom = st_multi(st_geomfromtext(geom))::geometry(multipolygon, 900914)
+
+alter table test.parcelle_cadastrale_copy
+alter column geom type geometry(multipolygon, 900914) using geom::geometry(multipolygon, 900914)
 ```
 
 ### Import d'une GDB (Esri) vers PostgreSQL/PostGIS
