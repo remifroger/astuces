@@ -16,7 +16,12 @@ Documentation : https://gdal.org/programs/ogr2ogr.html
 ### Import d'un SHP vers PostgreSQL/PostGIS
 Ici, import de C:\data\foncier\geo\parcelle_cadastrale.shp dans geo.parcelle_cadastrale
 ```
-ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=foncier user=postgres password=postgres" -nlt "MULTIPOLYGON" "C:\data\foncier\geo\parcelle_cadastrale.shp" -nln geo.parcelle_cadastrale
+ogr2ogr -f "PostgreSQL" --config PG_USE_COPY YES PG:"host=localhost port=5432 dbname=foncier user=postgres password=postgres" -nlt "MULTIPOLYGON" "C:\data\foncier\geo\parcelle_cadastrale.shp" -nln geo.parcelle_cadastrale
+```
+
+### Import d'un CSV vers PostgreSQL/PostGIS
+```
+ogr2ogr -f "PostgreSQL" --config PG_USE_COPY YES PG:"host=localhost port=5432 dbname=foncier user=postgres password=postgres" "C:\data\file.csv" -nln geo.table_import
 ```
 
 ### Export de PostgreSQL/PostGIS vers SHP
@@ -35,7 +40,7 @@ ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=test user=postgres p
 ### Copie d'une table avec géométrie Esri (sde) d'une BDD PostgreSQL vers une autre BDD PostgreSQL avec conversion en géométrie PostGIS
 Ici, copie de diffusion.parcelle_cadastrale de la BDD Apur (production) vers la BDD work dans la table test.parcelle_cadastrale_copy
 ```
-ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=work user=postgres password=postgres" PG:"host=zpostgresig port=5432 dbname=apur user=froger password=xxx" -lco OVERWRITE=yes -lco schema=test -sql "select st_astext(shape) as geom, * from diffusion.parcelle_cadastrale" -geomfield geom -nln parcelle_cadastrale_copy
+ogr2ogr -f "PostgreSQL" --config PG_USE_COPY YES PG:"host=localhost port=5432 dbname=work user=postgres password=postgres" PG:"host=zpostgresig port=5432 dbname=apur user=froger password=xxx" -lco OVERWRITE=yes -lco schema=test -sql "select st_astext(shape) as geom, * from diffusion.parcelle_cadastrale" -geomfield geom -nln parcelle_cadastrale_copy
 ```
 
 Puis, sur PostGIS, dans la BDD work :
