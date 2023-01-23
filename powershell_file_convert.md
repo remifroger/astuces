@@ -29,3 +29,8 @@ Source : https://excel.officetuts.net/examples/convert-excel-file-xlsx-to-csv-in
 ```powershell
 Get-Content C:\data\rpls\source\compil_decret_loi.csv | Set-Content -Encoding utf8 compil_decret_loi_utf8.csv
 ```
+
+### Import/export d'un CSV en UTF-8
+```powershell
+powershell -Command "Import-Csv -Delimiter ';' -Path 'C:\data\rpls\source\2022\rpls2022_decret_reg11.csv' | Export-Csv -NoTypeInformation -Delimiter ';' -Encoding UTF8 -Path 'C:\data\rpls\source\2022\rpls2022_decret_reg11_utf8.csv'"
+```
