@@ -18,3 +18,43 @@ Ici nous avons des adresses formatées de cette façon "Argenteuil (rue d')". No
 SELECT num_voie || ' ' || substring(adresse, '\((.+)\)') || ' ' || split_part(adresse, '(',1)  as adresse_ok, * 
 FROM table_pivot
 ```
+### Fonction PL/pgSQL : retourner les années disponibles selon un pas de temps
+
+```sql
+CREATE FUNCTION check_year_exist(liste integer[], substract integer) 
+RETURNS int[] AS $$
+DECLARE
+  r int[];
+  liste_ordered int[];
+  max_val int;
+  x int;
+BEGIN
+  execute format('SELECT max(a) from unnest(''%1$s''::int[]) a', liste) into max_val;
+  execute format('WITH temp_ AS (SELECT unnest(''%1$s''::int[]) AS x ORDER BY x DESC) SELECT array_agg(x)::int[] FROM temp_', liste) into liste_ordered;
+  raise notice '%', liste;
+  raise notice '%', liste_ordered;
+  r := array_append(r, max_val);
+  FOREACH x IN ARRAY liste_ordered
+    loop
+      raise notice 'x : %', x;
+      raise notice 'max : %', max_val;
+      if x <= max_val - substract then
+        r := array_append(r, x);
+        max_val := x;
+        raise notice '---- Ok : %', max_val;
+      end if;
+    END LOOP;
+  RETURN r;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### Usage
+
+```sql
+select * from check_year_exist('{1968, 1975, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019}', 5)
+```
+Résultat
+```
+{2019,2014,2009,1975,1968}
+```
